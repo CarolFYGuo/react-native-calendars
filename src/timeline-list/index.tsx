@@ -2,14 +2,14 @@ import throttle from 'lodash/throttle';
 import flatten from 'lodash/flatten';
 import dropRight from 'lodash/dropRight';
 
-import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import {isToday, generateDay} from '../dateutils';
+import { isToday, generateDay } from '../dateutils';
 import InfiniteList from '../infinite-list';
 import Context from '../expandableCalendar/Context';
-import {UpdateSources} from '../expandableCalendar/commons';
-import Timeline, {TimelineProps} from '../timeline/Timeline';
-import useTimelinePages, {INITIAL_PAGE, NEAR_EDGE_THRESHOLD} from './useTimelinePages';
+import { UpdateSources } from '../expandableCalendar/commons';
+import Timeline, { TimelineProps } from '../timeline/Timeline';
+import useTimelinePages, { INITIAL_PAGE, NEAR_EDGE_THRESHOLD } from './useTimelinePages';
 
 export interface TimelineListRenderItemInfo {
   item: string;
@@ -45,6 +45,7 @@ export interface TimelineListProps {
    * Should initially scroll to current time (relevant only for "today" timeline)
    */
   scrollToNow?: boolean;
+  isSuggestionOn?: boolean;
   /**
    * Should initially scroll to a specific time (relevant only for NOT "today" timelines)
    */
@@ -52,11 +53,12 @@ export interface TimelineListProps {
 }
 
 const TimelineList = (props: TimelineListProps) => {
-  const {timelineProps, events, suggestions, renderItem, showNowIndicator, scrollToFirst, scrollToNow, initialTime} = props;
-  const {date, updateSource, setDate, numberOfDays = 1, timelineLeftInset, showSuggestion} = useContext(Context);
+  const {timelineProps, events, isSuggestionOn, suggestions, renderItem, showNowIndicator, scrollToFirst, scrollToNow, initialTime} = props;
+  const {date, updateSource, setDate, numberOfDays = 1, timelineLeftInset, showSuggestion, setShowSuggestion} = useContext(Context);
   const listRef = useRef<any>();
   const prevDate = useRef(date);
   const [timelineOffset, setTimelineOffset] = useState();
+  setShowSuggestion(isSuggestionOn ? isSuggestionOn : showSuggestion);
 
   const {pages, pagesRef, resetPages, resetPagesDebounce, scrollToPageDebounce, shouldResetPages, isOutOfRange} =
     useTimelinePages({date, listRef, numberOfDays});
@@ -119,14 +121,12 @@ const TimelineList = (props: TimelineListProps) => {
       const weekSuggestions = [suggestions[item] || [], suggestions[generateDay(item, 1)] || [], suggestions[generateDay(item, 2)] || [], suggestions[generateDay(item, 3)] || [], suggestions[generateDay(item, 4)] || [], suggestions[generateDay(item, 5)] || [], suggestions[generateDay(item, 6)] || []];
       const weekDates = [item, generateDay(item, 1), generateDay(item, 2), generateDay(item, 3), generateDay(item, 4), generateDay(item, 5), generateDay(item, 6)];
       const numberOfDaysToDrop = (7 - numberOfDays);
-      //console.log("show??" + showSuggestion)
-      //console.log("item: " + date + "  "+weekDates)
       const _timelineProps = {
         ...timelineProps,
         key: item,
         date: dropRight(weekDates, numberOfDaysToDrop),
         events: flatten(dropRight(weekEvents, numberOfDaysToDrop)),
-        showSuggestion,
+        showSuggestion: isSuggestionOn,
         suggestions: flatten(dropRight(weekSuggestions, numberOfDaysToDrop)),
         scrollToNow: _isToday && isInitialPage && scrollToNow,
         initialTime: !_isToday && isInitialPage ? initialTime : undefined,
@@ -150,7 +150,7 @@ const TimelineList = (props: TimelineListProps) => {
         </>
       );
     },
-    [events, timelineOffset, showNowIndicator, numberOfDays]
+    [events, timelineOffset, showNowIndicator, numberOfDays, isSuggestionOn]
   );
 
   return (

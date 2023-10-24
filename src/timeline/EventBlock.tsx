@@ -5,7 +5,7 @@ import {View, Text, TextStyle, TouchableOpacity, ViewStyle, NativeModules, Anima
 export interface Event {
   id?: string;
   start: string;
-  end: string;
+  end?: string;
   title: string;
   summary?: string;
   color?: string;

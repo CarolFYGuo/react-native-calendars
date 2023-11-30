@@ -2,6 +2,7 @@ import first from 'lodash/first';
 import isFunction from 'lodash/isFunction';
 import isNumber from 'lodash/isNumber';
 import throttle from 'lodash/throttle';
+import { Event } from './EventBlock';
 
 import XDate from 'xdate';
 
@@ -12,9 +13,7 @@ import {
   Animated,
   View,
   Text,
-  Image,
-  ImageSourcePropType,
-  GestureResponderEvent,
+  Image, GestureResponderEvent,
   PanResponderGestureState,
   TouchableOpacity
 } from 'react-native';
@@ -31,6 +30,7 @@ import WeekCalendar from './WeekCalendar';
 import Context from './Context';
 import constants from '../commons/constants';
 import { UpdateSources } from './commons';
+import { TimelineProps } from 'react-native-calendars/src/timeline/Timeline';
 
 export enum Positions {
   CLOSED = 'closed',
@@ -47,6 +47,8 @@ const RIGHT_ARROW = require('../calendar/img/next.png');
 const knobHitSlop = {left: 10, right: 10, top: 10, bottom: 10};
 
 export interface ExpandableCalendarProps extends CalendarListProps {
+  wdEvents: {[date: string]: TimelineProps['events']};
+  eventOnClick: (event: Event) => void;
   /** the initial position of the calendar ('open' or 'closed') */
   initialPosition?: Positions;
   /** callback that fires when the calendar is opened or closed */
@@ -98,6 +100,8 @@ const headerStyleOverride = {
 const ExpandableCalendar = (props: ExpandableCalendarProps) => {
   const {date, setDate, numberOfDays, timelineLeftInset} = useContext(Context);
   const {
+    wdEvents,
+    eventOnClick,
     /** ExpandableCalendar props */
     initialPosition = Positions.CLOSED,
     onCalendarToggled,
@@ -173,12 +177,12 @@ const ExpandableCalendar = (props: ExpandableCalendarProps) => {
     if (!horizontal) {
       return Math.max(constants.screenHeight, constants.screenWidth);
     }
-    return CLOSED_HEIGHT + (WEEK_HEIGHT * (numberOfWeeks.current - 1)) + (hideKnob ? 12 : KNOB_CONTAINER_HEIGHT) + (constants.isAndroid ? 3 : 0);
+    return CLOSED_HEIGHT + (WEEK_HEIGHT * (numberOfWeeks.current - 1)) + (hideKnob ? 12 : KNOB_CONTAINER_HEIGHT) + (wdEvents && wdEvents[date]? wdEvents[date].length*30 : 0) + (constants.isAndroid ? 3 : 0);
   };
   const openHeight = useRef(getOpenHeight());
-  const closedHeight = useMemo(() => CLOSED_HEIGHT + (hideKnob || Number(numberOfDays) > 1 ? 0 : KNOB_CONTAINER_HEIGHT), [numberOfDays, hideKnob]);
+  const closedHeight = useMemo(() => CLOSED_HEIGHT + (hideKnob || Number(numberOfDays) > 1 ? 0 : KNOB_CONTAINER_HEIGHT) + (wdEvents&&wdEvents[date] ? wdEvents[date].length*30  : 0) , [numberOfDays, hideKnob, date]);
 
-  const startHeight = useMemo(() => isOpen ? openHeight.current : closedHeight, [closedHeight, isOpen]);
+  const startHeight = useMemo(() => isOpen ? openHeight.current : closedHeight, [closedHeight, isOpen, date]);
   const _height = useRef(startHeight);
   const deltaY = useMemo(() => new Animated.Value(startHeight), [startHeight]);
 
@@ -525,6 +529,26 @@ const ExpandableCalendar = (props: ExpandableCalendarProps) => {
     );
   };
 
+  const renderWholeDayEvents = (events: {
+    [date: string]: TimelineProps['events'];
+  }) => {
+    const eventsToday = events[date];
+    if(!eventsToday){
+      return;
+    }
+    return (
+      <View style={[style.current.todayContainer, {height: eventsToday.length*30 }]} pointerEvents={'box-none'}>
+        {eventsToday && eventsToday.length > 0 && eventsToday.map(ev => {
+          return (<TouchableOpacity style={style.current.wholedayEvent} testID={`${testID}.knob`} onPress={(event)=>eventOnClick(event)} >
+            <Text>
+              {ev.title}
+            </Text>
+          </TouchableOpacity>);
+      })}
+      </View>
+    )
+  }
+
   const renderWeekCalendar = () => {
     const WeekComponent = disableWeekScroll ? Week : WeekCalendar;
 
@@ -606,6 +630,7 @@ const ExpandableCalendar = (props: ExpandableCalendarProps) => {
           {renderCalendarList()}
           {renderWeekCalendar()}
           {!hideKnob && renderKnob()}
+          {renderWholeDayEvents(wdEvents)}
           {!horizontal && renderAnimatedHeader()}
         </Animated.View>
       )}
@@ -624,7 +649,7 @@ ExpandableCalendar.defaultProps = {
   leftArrowImageSource: LEFT_ARROW,
   rightArrowImageSource: RIGHT_ARROW,
   allowShadow: true,
-  openThreshold: PAN_GESTURE_THRESHOLD,
+  openThreshold:PAN_GESTURE_THRESHOLD,
   closeThreshold: PAN_GESTURE_THRESHOLD,
   closeOnDayPress: true
 };

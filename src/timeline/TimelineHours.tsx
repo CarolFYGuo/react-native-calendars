@@ -1,15 +1,13 @@
 import range from 'lodash/range';
 import times from 'lodash/times';
 
-import React, {useCallback, useMemo, useRef} from 'react';
-import {View, Image, Text, TouchableWithoutFeedback, ViewStyle, TextStyle, StyleSheet} from 'react-native';
+import React, { useCallback, useMemo, useRef } from 'react';
+import { View, Text, TouchableWithoutFeedback, ViewStyle, TextStyle, StyleSheet } from 'react-native';
 
 import constants from '../commons/constants';
-import {buildTimeString, calcTimeByPosition, calcDateByPosition} from './helpers/presenter';
-import {buildUnavailableHoursBlocks, HOUR_BLOCK_HEIGHT, UnavailableHours} from './Packer';
+import { buildTimeString, calcTimeByPosition, calcDateByPosition } from './helpers/presenter';
+import { buildUnavailableHoursBlocks, HOUR_BLOCK_HEIGHT, UnavailableHours } from './Packer';
 
-import line from '../img/line.png';
-import solidLine from '../img/solidLine.png';
 
 interface NewEventTime {
   hour: number;
@@ -121,10 +119,6 @@ const TimelineHours = (props: TimelineHoursProps) => {
         const toDate = new Date(date ? date : '');
         return (
           <React.Fragment key={time}>
-            <View style={[styles.timeLabel, {top: offset * index - 6, width: timelineLeftInset - 14}, {flexDirection: 'column', width: 5}]}>
-              {((toDate >= today) || (toDate.toString().split(' ').slice(0, 4).join(' ') === today.toString().split(' ').slice(0, 4).join(' ')  && (time >= today.getHours()))) ? <Image source={line} style={styles.lines}/> : <Image source={solidLine} style={styles.lines}/>}
-              <View style={time%2 === 0 ? [styles.circle] : {height: 12, width: 12}} />
-            </View>
             <Text key={`timeLabel${time}`} style={[styles.timeLabel, {top: offset * index - 6, width: timelineLeftInset - 14}]}>
               {time%2 === 0 && timeText}
             </Text>
@@ -134,16 +128,10 @@ const TimelineHours = (props: TimelineHoursProps) => {
                 style={[styles.line, {top: offset * index, width: dimensionWidth - EVENT_DIFF, left: timelineLeftInset - 16}]}
               />
             )}
-            {
-              <View
-                key={`lineHalf${time}`}
-                style={[styles.line, {top: offset * (index + 0.5), width: dimensionWidth - EVENT_DIFF, left: timelineLeftInset - 16}]}
-              />
-            }
           </React.Fragment>
         );
       })}
-      {times(numberOfDays, (index) => <View key={index} style={[styles.verticalLine, {right: (index + 1) * width / numberOfDays}]} />)}
+      {times(numberOfDays, (index) => <View key={index} style={[styles.verticalLine, {right: (index + 1) * width / numberOfDays + 14}]} />)}
     </>
   );
 };

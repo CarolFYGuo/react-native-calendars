@@ -1,7 +1,7 @@
 import includes from 'lodash/includes';
 import XDate from 'xdate';
 
-import React, {Fragment, ReactNode, useCallback, useMemo, forwardRef, useImperativeHandle, useRef} from 'react';
+import React, { Fragment, ReactNode, useCallback, useMemo, forwardRef, useImperativeHandle, useRef } from 'react';
 import {
   ActivityIndicator,
   Platform,
@@ -15,9 +15,9 @@ import {
   ColorValue,
   Insets
 } from 'react-native';
-import {formatNumbers, weekDayNames} from '../../dateutils';
+import { formatNumbers, weekDayNames } from '../../dateutils';
 import styleConstructor from './style';
-import {Theme, Direction} from '../../types';
+import { Theme, Direction } from '../../types';
 
 export interface CalendarHeaderProps {
   month?: XDate;

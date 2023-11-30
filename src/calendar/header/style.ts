@@ -1,6 +1,6 @@
-import {StyleSheet, Platform} from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import * as defaultStyle from '../../style';
-import {Theme} from '../../types';
+import { Theme } from '../../types';
 import constants from '../../commons/constants';
 
 export default function (theme: Theme = {}) {

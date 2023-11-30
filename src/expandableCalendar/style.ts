@@ -1,6 +1,6 @@
-import {StyleSheet, Platform} from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import * as defaultStyle from '../style';
-import {Theme} from '../types';
+import { Theme } from '../types';
 import constants from '../commons/constants';
 
 
@@ -33,6 +33,28 @@ export default function styleConstructor(theme: Theme = {}) {
     },
     container: {
       backgroundColor: appStyle.calendarBackground
+    },
+    todayContainer: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 15,
+      alignItems: 'center',
+      padding: 1,
+      backgroundColor: 'white'
+    },
+    wholedayEvent: {
+      padding: 2,
+      justifyContent: 'center',
+      marginBottom: 2,
+      width: '90%',
+      alignSelf: 'center',
+      marginHorizontal: 2,
+      backgroundColor: '#FFF7F6',
+      border: 1,
+      borderColor: '#F3E4E2',
+      borderRadius: 20,
+      height: 24,
     },
     knobContainer: {
       position: 'absolute',
@@ -70,8 +92,8 @@ export default function styleConstructor(theme: Theme = {}) {
       backgroundColor: appStyle.calendarBackground
     },
     headerTitle: {
-      alignSelf: 'center',
-      paddingTop: 13,
+      alignSelf: 'flex-start',
+      paddingTop: 18,
       paddingBottom: 18,
       fontSize: appStyle.textMonthFontSize,
       fontFamily: appStyle.textMonthFontFamily,

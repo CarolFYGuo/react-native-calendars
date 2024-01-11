@@ -8,14 +8,14 @@ import XDate from 'xdate';
 
 import React, { useContext, useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  AccessibilityInfo,
-  PanResponder,
-  Animated,
-  View,
-  Text,
-  Image, GestureResponderEvent,
-  PanResponderGestureState,
-  TouchableOpacity
+	AccessibilityInfo,
+	PanResponder,
+	Animated,
+	View,
+	Text,
+	Image, GestureResponderEvent,
+	PanResponderGestureState,
+	TouchableOpacity
 } from 'react-native';
 
 import { page } from '../dateutils';
@@ -539,7 +539,7 @@ const ExpandableCalendar = (props: ExpandableCalendarProps) => {
     return (
       <View style={[style.current.todayContainer, {height: eventsToday.length*30 }]} pointerEvents={'box-none'}>
         {eventsToday && eventsToday.length > 0 && eventsToday.map(ev => {
-          return (<TouchableOpacity style={style.current.wholedayEvent} testID={`${testID}.knob`} onPress={(event)=>eventOnClick(event)} >
+          return (<TouchableOpacity style={style.current.wholedayEvent} testID={`${testID}.knob`} onPress={()=>eventOnClick(eventsToday)} >
             <Text>
               {ev.title}
             </Text>

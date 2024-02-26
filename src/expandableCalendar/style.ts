@@ -5,7 +5,7 @@ import constants from '../commons/constants';
 
 
 export const HEADER_HEIGHT = 68;
-export const KNOB_CONTAINER_HEIGHT = 24;
+export const KNOB_CONTAINER_HEIGHT = 35;
 
 
 export default function styleConstructor(theme: Theme = {}) {
@@ -38,7 +38,7 @@ export default function styleConstructor(theme: Theme = {}) {
       position: 'absolute',
       left: 0,
       right: 0,
-      bottom: 15,
+      bottom: 25,
       alignItems: 'center',
       padding: 1,
       backgroundColor: 'white'

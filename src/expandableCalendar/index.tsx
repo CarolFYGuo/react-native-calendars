@@ -532,14 +532,14 @@ const ExpandableCalendar = (props: ExpandableCalendarProps) => {
   const renderWholeDayEvents = (events: {
     [date: string]: TimelineProps['events'];
   }) => {
-    const eventsToday = events[date];
+    const eventsToday: TimelineProps['events'] = events[date];
     if(!eventsToday){
       return;
     }
     return (
       <View style={[style.current.todayContainer, {height: eventsToday.length*30 }]} pointerEvents={'box-none'}>
-        {eventsToday && eventsToday.length > 0 && eventsToday.map(ev => {
-          return (<TouchableOpacity style={style.current.wholedayEvent} testID={`${testID}.knob`} onPress={()=>eventOnClick(eventsToday)} >
+        {eventsToday && eventsToday.length > 0 && eventsToday.map((ev:Event) => {
+          return (<TouchableOpacity style={style.current.wholedayEvent} testID={`${testID}.knob`} onPress={()=>eventOnClick(ev)} >
             <Text>
               {ev.title}
             </Text>
